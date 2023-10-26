@@ -1,3 +1,4 @@
 # workout
 
-Group project for RamHack
+Workout plan app
+Group project for CSU RamHack
