@@ -1,4 +1,4 @@
 # workout
 
-Workout plan app
+Workout app in React created with Vite
 Group project for CSU RamHack
