@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./style.css";
+import { NewToDoForm } from "./NewToDoForm";
+import { ToDoList } from "./ToDoList";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [toDos, setToDos] = useState(() => {
+    const localValue = localStorage.getItem("ITEMS");
+    if (localValue == null) return [];
+
+    return JSON.parse(localValue);
+  });
+
+  useEffect(() => {
+    localStorage.setItem("ITEMS", JSON.stringify(toDos));
+  }, [toDos]);
+
+  function addToDo(title) {
+    setToDos((currentToDos) => {
+      return [
+        ...currentToDos,
+        { id: crypto.randomUUID(), title, completed: false },
+      ];
+    });
+  }
+
+  function toggleToDo(id, completed) {
+    setToDos((currentToDos) => {
+      return currentToDos.map((toDo) => {
+        if (toDo.id === id) {
+          return { ...toDo, completed };
+        }
+
+        return toDo;
+      });
+    });
+  }
+
+  function deleteToDo(id) {
+    setToDos((currentToDos) => {
+      return currentToDos.filter((toDo) => toDo.id !== id);
+    });
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <NewToDoForm onSubmit={addToDo} />
+      <h1 className="header">To Do List</h1>
+      <ToDoList toDos={toDos} toggleToDo={toggleToDo} deleteToDo={deleteToDo} />
     </>
-  )
+  );
 }
-
-export default App
